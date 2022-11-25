@@ -13,7 +13,7 @@ const ShowTransactions = ()=> {
         <div className="">
           {transactions.map((transaction, i) => (
             <div className='bg-slate-200 px-4 py-2 my-3 rounded-xl' key={i}>
-              <div className="hover:cursor-pointer" onClick={() => setIsHidden(prev => !prev)}>{transaction.timestamp}</div>
+              <div className="hover:cursor-pointer text-lg font-light" onClick={() => setIsHidden(prev => !prev)}>{transaction.timestamp}</div>
               <div className={`${ishidden ? "hidden" : ""}`}>
                 <p><strong>To:</strong> {addressLink(transaction.receiver)}</p>
                 <p><strong>From:</strong> {addressLink(transaction.sender)}</p>
