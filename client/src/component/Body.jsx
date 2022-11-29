@@ -5,7 +5,7 @@ import TransactionForm from './TransactionForm'
 const Body = () => {
   return (
     <>
-      <div className="flex gap-6 py-8 md:flex-row flex-col">
+      <div className="flex gap-6 py-8 md:flex-row flex-col justify-between">
         <div className="space-y-6">
           <p className='lg:text-6xl text-5xl'>Send crypto across the internet</p>
           <p className='text-gray-600'>Explore Web 3.0 and Blockchain technology. Buy and sell crypto here on Cryptchange</p>
@@ -17,7 +17,7 @@ const Body = () => {
             )}
           </div>
         </div>
-        <div className="space-y-6 self-center">
+        <div className="space-y-6">
           <EthereumCard />
           <TransactionForm />
         </div>
