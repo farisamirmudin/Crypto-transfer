@@ -7,8 +7,10 @@ const Nav = () => {
   return (
     <nav className="flex justify-between py-4">
       <p className="text-4xl">Kryptransfer</p>
+      <div className="">
       <ConnectButton />
-      {/* {!hasMetamask && <p className='text-red-600 text-sm italic my-2'>* Please install Metamask</p>} */}
+      {!hasMetamask && <p className='text-red-600 text-xs italic'>*Please install Metamask</p>}
+      </div>
     </nav>
   )
 }
