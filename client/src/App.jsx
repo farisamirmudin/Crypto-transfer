@@ -6,9 +6,9 @@ import Footer from './component/Footer'
 function App() {
 
   return (
-    <div className='bg-slate-100 px-20 md:px-40 min-h-screen flex flex-col'>
-      <Nav />
+    <div className='px-16 max-w-screen-lg mx-auto'>
       <TransactionProvider>
+        <Nav />
         <Body />
       </TransactionProvider>
       <Footer />

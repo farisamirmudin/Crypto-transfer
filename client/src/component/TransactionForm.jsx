@@ -13,7 +13,7 @@ const TransactionForm = () => {
     sendTransaction()
   }
   return (
-    <div className="rounded-xl bg-gradient-to-br from-[#342E2A] to-[#425C76] py-5 px-6 mt-8 w-80">
+    <div className="rounded-xl bg-gradient-to-br from-[#342E2A] to-[#425C76] p-6 w-80">
       <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
         <input type="text" placeholder='Address To' name='receiver' value={formData.receiver} onChange={handleChange} className={style} />
         <input type="text" placeholder='Amount (ETH)' name='amount' value={formData.amount} onChange={handleChange} className={style} />

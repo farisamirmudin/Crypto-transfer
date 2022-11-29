@@ -7,7 +7,7 @@ import { ShortenAddress } from './Address'
 const EthereumCard = () => {
   const { currentAccount } = useContext(TransactionContext)
   return (
-    <div className="rounded-xl bg-gradient-to-br from-[#22C1C3] to-[#FDBB2D] w-80 h-40 grid grid-cols-2 p-2">
+    <div className="rounded-xl bg-gradient-to-br from-[#22C1C3] to-[#FDBB2D] h-40 w-80 grid grid-cols-2 p-2">
       <div className='w-10 h-10 border border-white rounded-full flex justify-center items-center'>
         <FaEthereum className='text-2xl text-white' />
       </div>
