@@ -1,10 +1,10 @@
-# Kryptransfer
+# Crypto Transfer
 
-Here is a finished cryptocurrency transaction application built using next.js 13 and solidity. It is paired with Metamask wallet.
+Here is the updated crypto transfer application built using react 18 and solidity. It is paired with Metamask wallet.
 
 ## What I learn:
-- Connecting react.js application to smart contract
-- Pairing of ethereum wallet using metamask
-- Writing smart contract using solidity
+
+- Connecting react.js application to smart contract using ethers.js 6
+- Writing smart contract using solidity 8
+- Integrating metamask
 - Terminology such as Gas, Gas Fee
-- Sending ETH to another account
