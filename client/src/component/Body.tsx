@@ -27,8 +27,8 @@ const Body = () => {
           </h1>
           <p className="py-6">
             Explore Web 3.0 and Blockchain technology, implementing token
-            transfer and event emission using a smart contract deployed on the
-            Goerli test network.
+            transfer and event emission using smart contract deployed on Goerli
+            test network.
           </p>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
             {[
