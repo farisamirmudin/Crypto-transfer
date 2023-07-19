@@ -7,7 +7,7 @@ export default function Transactions() {
   if (!transactions || transactions.length === 0) return null;
 
   return (
-    <div className="min-w-64 carousel rounded-box">
+    <div className="carousel rounded-box">
       {transactions.map(({ timestamp, receiver, sender, amount, message }) => (
         <div className="carousel-item w-full bg-neutral-focus" key={timestamp}>
           <div className="flex flex-col gap-4 p-8">

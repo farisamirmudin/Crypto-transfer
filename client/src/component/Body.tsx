@@ -6,7 +6,7 @@ const Body = () => {
   return (
     <div className="hero flex-1 bg-base-200">
       <div className="hero-content flex-col-reverse lg:flex-row-reverse">
-        <div className="card w-96 bg-base-100 shadow-xl">
+        <div className="card w-72 bg-base-100 shadow-xl">
           <div className="flex flex-col items-center gap-2 pt-8">
             <p className="text-4xl">Transactions</p>
             <p className="text-sm">Scroll to the right to see more.</p>
@@ -15,7 +15,7 @@ const Body = () => {
             <Transactions />
           </div>
         </div>
-        <div className="card w-[600px] bg-base-100 shadow-xl">
+        <div className="card w-72 lg:w-96 bg-base-100 shadow-xl">
           <EthereumCard />
           <div className="card-body">
             <TransactionForm />
