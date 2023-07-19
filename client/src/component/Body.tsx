@@ -6,7 +6,7 @@ import { useContext } from "react";
 
 const Body = () => {
   const { errorMessages } = useContext(TransactionContext);
-  console.log(errorMessages);
+
   return (
     <div className="hero flex-1 bg-base-200">
       <div className="hero-content flex-col-reverse lg:flex-row-reverse">
