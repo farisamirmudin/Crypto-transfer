@@ -26,7 +26,7 @@ type State = {
   signer?: ethers.JsonRpcSigner;
   connectedWalletAddress?: string;
   transactions?: Transaction[];
-  errorMessages?: string;
+  errorMessages?: { category: string; message: string };
 };
 
 type Transaction = {
@@ -41,7 +41,7 @@ type Transaction = {
 type TransactionContextProps = {
   connectedWalletAddress?: string;
   transactions?: Transaction[];
-  errorMessages?: string;
+  errorMessages?: { category: string; message: string };
   connectWallet: () => Promise<void>;
   sendTransaction: (data: FormInputs) => Promise<void>;
 };
@@ -72,7 +72,12 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!window.ethereum) {
-      dispatch({ errorMessages: "Metamask is not installed" });
+      dispatch({
+        errorMessages: {
+          category: "walletError",
+          message: "Metamask is not installed",
+        },
+      });
       return;
     }
     const populateState = async () => {
@@ -87,7 +92,12 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
         dispatch({ contract, provider, signer });
       } catch (error: unknown) {
         const parsedError = Web3Error.parse(error);
-        dispatch({ errorMessages: parsedError.message.split("(")[0].trim() });
+        dispatch({
+          errorMessages: {
+            category: "web3Error",
+            message: parsedError.message.split("(")[0].trim(),
+          },
+        });
       }
     };
     populateState();
@@ -108,7 +118,12 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ connectedWalletAddress: wallets?.[0] });
     } catch (error: unknown) {
       const parsedError = Web3Error.parse(error);
-      dispatch({ errorMessages: parsedError.message.split("(")[0].trim() });
+      dispatch({
+        errorMessages: {
+          category: "web3Error",
+          message: parsedError.message.split("(")[0].trim(),
+        },
+      });
     }
   };
 
@@ -131,7 +146,12 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ transactions: parsedTransaction });
     } catch (error: unknown) {
       const parsedError = Web3Error.parse(error);
-      dispatch({ errorMessages: parsedError.message.split("(")[0].trim() });
+      dispatch({
+        errorMessages: {
+          category: "web3Error",
+          message: parsedError.message.split("(")[0].trim(),
+        },
+      });
     }
   };
 
@@ -168,7 +188,12 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       getAllTransactions();
     } catch (error: unknown) {
       const parsedError = Web3Error.parse(error);
-      dispatch({ errorMessages: parsedError.message.split("(")[0].trim() });
+      dispatch({
+        errorMessages: {
+          category: "web3Error",
+          message: parsedError.message.split("(")[0].trim(),
+        },
+      });
     }
   };
 

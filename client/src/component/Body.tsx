@@ -13,17 +13,20 @@ const Body = () => {
         <div className="card w-80 bg-base-100 shadow-xl">
           <div className="flex flex-col items-center gap-2 p-4">
             <p className="text-4xl">Transactions</p>
-            {errorMessages ? (
-              <p className="italic text-sm text-red-500">{errorMessages}</p>
+            {errorMessages && errorMessages.category === "walletError" ? (
+              <p className="italic text-sm text-red-500">
+                {errorMessages.message}
+              </p>
             ) : (
               <p className="text-sm">Scroll to the right to see more.</p>
             )}
           </div>
-          {!errorMessages && (
-            <div className="card-body py-0 mb-8">
-              <Transactions />
-            </div>
-          )}
+          {!errorMessages ||
+            (errorMessages?.category !== "walletError" && (
+              <div className="card-body py-0 mb-8">
+                <Transactions />
+              </div>
+            ))}
         </div>
         <div className="card w-80 lg:w-[500px] bg-base-100 shadow-xl">
           <EthereumCard />
