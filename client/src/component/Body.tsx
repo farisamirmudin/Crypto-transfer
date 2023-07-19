@@ -6,7 +6,7 @@ import { useContext } from "react";
 
 const Body = () => {
   const { errorMessages } = useContext(TransactionContext);
-
+  console.log(errorMessages);
   return (
     <div className="hero flex-1 bg-base-200">
       <div className="hero-content flex-col-reverse lg:flex-row-reverse">
@@ -21,12 +21,11 @@ const Body = () => {
               <p className="text-sm">Scroll to the right to see more.</p>
             )}
           </div>
-          {!errorMessages ||
-            (errorMessages?.category !== "walletError" && (
-              <div className="card-body py-0 mb-8">
-                <Transactions />
-              </div>
-            ))}
+          {(!errorMessages || errorMessages?.category !== "walletError") && (
+            <div className="card-body py-0 mb-8">
+              <Transactions />
+            </div>
+          )}
         </div>
         <div className="card w-80 lg:w-[500px] bg-base-100 shadow-xl">
           <EthereumCard />
