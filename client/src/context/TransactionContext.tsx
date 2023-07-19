@@ -7,6 +7,7 @@ import {
 } from "ethers";
 import abi from "../utils/Transactions.json";
 import { FormInputs } from "../typings/FormInput";
+import { z } from "zod";
 
 declare global {
   interface Window {
@@ -14,12 +15,18 @@ declare global {
   }
 }
 
+const Web3Error = z.object({
+  code: z.string(),
+  message: z.string(),
+});
+
 type State = {
   contract?: ethers.Contract;
   provider?: ethers.BrowserProvider;
   signer?: ethers.JsonRpcSigner;
   connectedWalletAddress?: string;
   transactions?: Transaction[];
+  errorMessages?: string;
 };
 
 type Transaction = {
@@ -34,6 +41,7 @@ type Transaction = {
 type TransactionContextProps = {
   connectedWalletAddress?: string;
   transactions?: Transaction[];
+  errorMessages?: string;
   connectWallet: () => Promise<void>;
   sendTransaction: (data: FormInputs) => Promise<void>;
 };
@@ -41,6 +49,7 @@ type TransactionContextProps = {
 export const TransactionContext = createContext<TransactionContextProps>({
   connectedWalletAddress: undefined,
   transactions: undefined,
+  errorMessages: undefined,
   connectWallet: async () => undefined,
   sendTransaction: async () => undefined,
 });
@@ -57,52 +66,73 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       signer: undefined,
       connectedWalletAddress: undefined,
       transactions: undefined,
+      errorMessages: undefined,
     }
   );
 
   useEffect(() => {
+    if (!window.ethereum) {
+      dispatch({ errorMessages: "Metamask is not installed" });
+      return;
+    }
     const populateState = async () => {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const contract = new ethers.Contract(
-        import.meta.env.VITE_CONTRACT_ADDRESS,
-        abi.abi,
-        signer
-      );
-      dispatch({ contract, provider, signer });
+      try {
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(
+          import.meta.env.VITE_CONTRACT_ADDRESS,
+          abi.abi,
+          signer
+        );
+        dispatch({ contract, provider, signer });
+      } catch (error: unknown) {
+        const parsedError = Web3Error.parse(error);
+        dispatch({ errorMessages: parsedError.message.split("(")[0].trim() });
+      }
     };
     populateState();
   }, []);
 
   useEffect(() => {
+    if (!state.contract) return;
     getAllTransactions();
   }, [state.contract]);
 
   const connectWallet = async () => {
     if (!state.provider) return;
-    const wallets = (await state.provider.send(
-      "eth_requestAccounts",
-      []
-    )) as string[];
-    dispatch({ connectedWalletAddress: wallets?.[0] });
+    try {
+      const wallets = (await state.provider.send(
+        "eth_requestAccounts",
+        []
+      )) as string[];
+      dispatch({ connectedWalletAddress: wallets?.[0] });
+    } catch (error: unknown) {
+      const parsedError = Web3Error.parse(error);
+      dispatch({ errorMessages: parsedError.message.split("(")[0].trim() });
+    }
   };
 
   const getAllTransactions = async () => {
     if (!state.contract) return;
-    const transactions =
-      (await state.contract.getAllTransactions()) as Transaction[];
+    try {
+      const transactions =
+        (await state.contract.getAllTransactions()) as Transaction[];
 
-    const parsedTransaction = transactions.map(
-      ({ sender, receiver, message, timestamp, keyword, amount }) => ({
-        sender,
-        receiver,
-        message,
-        timestamp: Number(timestamp),
-        keyword,
-        amount: Number(amount) / 10 ** 18,
-      })
-    );
-    dispatch({ transactions: parsedTransaction });
+      const parsedTransaction = transactions.map(
+        ({ sender, receiver, message, timestamp, keyword, amount }) => ({
+          sender,
+          receiver,
+          message,
+          timestamp: Number(timestamp),
+          keyword,
+          amount: Number(amount) / 10 ** 18,
+        })
+      );
+      dispatch({ transactions: parsedTransaction });
+    } catch (error: unknown) {
+      const parsedError = Web3Error.parse(error);
+      dispatch({ errorMessages: parsedError.message.split("(")[0].trim() });
+    }
   };
 
   const sendTransaction = async ({
@@ -113,28 +143,33 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   }: FormInputs) => {
     const { provider, connectedWalletAddress, contract } = state;
     if (!provider || !contract || !connectedWalletAddress) return;
-    const parsedAmount = ethers.parseEther(amount);
-    await provider.send("eth_sendTransaction", [
-      {
-        from: connectedWalletAddress,
-        to: receiver,
-        gas: "0x5208",
-        value: parsedAmount,
-      },
-    ]);
+    try {
+      const parsedAmount = ethers.parseEther(amount);
+      await provider.send("eth_sendTransaction", [
+        {
+          from: connectedWalletAddress,
+          to: receiver,
+          gas: "0x5208",
+          value: parsedAmount,
+        },
+      ]);
 
-    const transactionHash = (await contract.addToBlockchain(
-      receiver,
-      parsedAmount,
-      message,
-      keyword
-    )) as ContractTransactionResponse;
+      const transactionHash = (await contract.addToBlockchain(
+        receiver,
+        parsedAmount,
+        message,
+        keyword
+      )) as ContractTransactionResponse;
 
-    console.log(`Loading ${transactionHash.hash}`);
-    const transactionReceipt = await transactionHash.wait();
-    console.log(`Success ${transactionHash.hash}`);
-    console.log({ transactionReceipt });
-    getAllTransactions();
+      console.log(`Loading ${transactionHash.hash}`);
+      const transactionReceipt = await transactionHash.wait();
+      console.log(`Success ${transactionHash.hash}`);
+      console.log({ transactionReceipt });
+      getAllTransactions();
+    } catch (error: unknown) {
+      const parsedError = Web3Error.parse(error);
+      dispatch({ errorMessages: parsedError.message.split("(")[0].trim() });
+    }
   };
 
   return (
@@ -142,6 +177,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       value={{
         connectedWalletAddress: state.connectedWalletAddress,
         transactions: state.transactions,
+        errorMessages: state.errorMessages,
         connectWallet,
         sendTransaction,
       }}
