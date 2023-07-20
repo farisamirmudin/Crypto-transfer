@@ -7,24 +7,20 @@ export default function Transactions() {
   if (!transactions || transactions.length === 0) return null;
 
   return (
-    <div className="carousel rounded-box">
+    <div className="flex flex-col gap-8">
       {transactions.map(({ timestamp, receiver, sender, amount, message }) => (
-        <div className="carousel-item w-full bg-neutral-focus" key={timestamp}>
-          <div className="flex flex-col gap-4 p-8">
-            <div>{new Date(timestamp * 1000).toLocaleString()}</div>
-            <div>
-              <p>To:</p> <Address address={receiver} />
-            </div>
-            <div>
-              <p>From:</p> <Address address={sender} />
-            </div>
-            <div>
-              <p>Amount:</p> {amount} ETH
-            </div>
-            <div>
-              <p>Message:</p> {message}
-            </div>
-          </div>
+        <div key={timestamp}>
+          <p className="text-md">
+            {new Date(timestamp * 1000).toLocaleString()}
+          </p>
+          <p>
+            To: <Address address={receiver} />
+          </p>
+          <p>
+            From: <Address address={sender} />
+          </p>
+          <p>Amount: {amount} ETH</p>
+          <p>Message: {message}</p>
         </div>
       ))}
     </div>

@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { TransactionContext } from "../context/TransactionContext";
-import Spinner from "./Spinner";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FormInputs } from "../typings/FormInput";
 
@@ -8,7 +7,6 @@ const TransactionForm = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<FormInputs>();
   const { connectedWalletAddress, sendTransaction } =
