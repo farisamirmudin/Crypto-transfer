@@ -8,6 +8,7 @@ import {
 import abi from "../utils/Transactions.json";
 import { FormInputs } from "../typings/FormInput";
 import { z } from "zod";
+import { toast } from "react-hot-toast";
 
 declare global {
   interface Window {
@@ -26,7 +27,6 @@ type State = {
   signer?: ethers.JsonRpcSigner;
   connectedWalletAddress?: string;
   transactions?: Transaction[];
-  errorMessages?: { category: string; message: string };
 };
 
 type Transaction = {
@@ -41,7 +41,6 @@ type Transaction = {
 type TransactionContextProps = {
   connectedWalletAddress?: string;
   transactions?: Transaction[];
-  errorMessages?: { category: string; message: string };
   connectWallet: () => Promise<void>;
   sendTransaction: (data: FormInputs) => Promise<void>;
 };
@@ -49,7 +48,6 @@ type TransactionContextProps = {
 export const TransactionContext = createContext<TransactionContextProps>({
   connectedWalletAddress: undefined,
   transactions: undefined,
-  errorMessages: undefined,
   connectWallet: async () => undefined,
   sendTransaction: async () => undefined,
 });
@@ -66,18 +64,12 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       signer: undefined,
       connectedWalletAddress: undefined,
       transactions: undefined,
-      errorMessages: undefined,
     }
   );
 
   useEffect(() => {
     if (!window.ethereum) {
-      dispatch({
-        errorMessages: {
-          category: "walletError",
-          message: "Metamask is not installed",
-        },
-      });
+      toast.error("Metamask is not installed");
       return;
     }
     const populateState = async () => {
@@ -92,12 +84,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
         dispatch({ contract, provider, signer });
       } catch (error: unknown) {
         const parsedError = Web3Error.parse(error);
-        dispatch({
-          errorMessages: {
-            category: "web3Error",
-            message: parsedError.message.split("(")[0].trim(),
-          },
-        });
+        toast.error(parsedError.message.split("(")[0].trim());
       }
     };
     populateState();
@@ -118,12 +105,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ connectedWalletAddress: wallets?.[0] });
     } catch (error: unknown) {
       const parsedError = Web3Error.parse(error);
-      dispatch({
-        errorMessages: {
-          category: "web3Error",
-          message: parsedError.message.split("(")[0].trim(),
-        },
-      });
+      toast.error(parsedError.message.split("(")[0].trim());
     }
   };
 
@@ -146,12 +128,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ transactions: parsedTransaction });
     } catch (error: unknown) {
       const parsedError = Web3Error.parse(error);
-      dispatch({
-        errorMessages: {
-          category: "web3Error",
-          message: parsedError.message.split("(")[0].trim(),
-        },
-      });
+      toast.error(parsedError.message.split("(")[0].trim());
     }
   };
 
@@ -188,12 +165,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       getAllTransactions();
     } catch (error: unknown) {
       const parsedError = Web3Error.parse(error);
-      dispatch({
-        errorMessages: {
-          category: "web3Error",
-          message: parsedError.message.split("(")[0].trim(),
-        },
-      });
+      toast.error(parsedError.message.split("(")[0].trim());
     }
   };
 
@@ -202,7 +174,6 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       value={{
         connectedWalletAddress: state.connectedWalletAddress,
         transactions: state.transactions,
-        errorMessages: state.errorMessages,
         connectWallet,
         sendTransaction,
       }}
